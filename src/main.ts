@@ -4,7 +4,7 @@ import { WindowEntity } from "./Window";
 
 const container = document.getElementById("desktop")!;
 
-function main() {
+async function main() {
   const project = new Project();
 
   project.layouts.add({
@@ -93,9 +93,27 @@ function main() {
       { id: "c3", rect: { x: 0.666, y: 0, width: 0.334, height: 1 } },
     ]
   });
-  
+
+
+  project.layouts.add({
+    id: "test",
+    name: "test",
+    slots: [
+      { id: "c1", rect: { x: 0, y: 0, width: 0.5, height: 1 } },
+      { id: "c2", rect: { x: 0.5, y: 0, width: 0.5, height: 1 } },
+
+    ]
+  });
+
+
+
+  const bind = document.createElement("div");
+  const text = await read_text_flie("../src/templates/WeatherCard.html");
+  bind.innerHTML = text;
+
+
   project.windows.add(
-    new WindowEntity("Janela A", { x: 0, y: 0, width: 200, height: 200 },)
+    new WindowEntity("Simple Editor", { x: 0, y: 0, width: 200, height: 200 }, bind)
   );
 
   project.windows.add(
@@ -113,17 +131,23 @@ function main() {
   const runtime = new Runtime(project, container);
 
   runtime.applyLayout("quadrants");
-  runtime.start();
-
-
-
+  runtime.request_update_tick();
 
 
   createLayoutButtons(project, runtime);
-  window.addEventListener("resize", () => { runtime.applyLayout("quadrants") })
+  window.addEventListener("resize", () => { runtime.applyLayout("unity-classic") })
 }
 
 window.onload = main;
+
+
+
+async function read_text_flie(url: string) {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("Erro ao buscar arquivo");
+  const texto = await res.text();
+  return texto;
+}
 
 function createLayoutButtons(project: Project, runtime: Runtime) {
   const bar = document.createElement("div");

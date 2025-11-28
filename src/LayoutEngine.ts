@@ -1,4 +1,6 @@
 import type { LayoutSlot } from "./LayoutManager";
+import { Mathf } from "./Mathf";
+import { AABB } from "./physics/AABB";
 import type { Project } from "./Project";
 import type { WindowEntity } from "./Window";
 
@@ -74,35 +76,22 @@ export class LayoutEngine {
     this.updateSlotWindow(slot, slot.activeWindow);
   }
 
+  public resize() {
 
+  }
 
   private getSlotAtPoint(slots: LayoutSlot[], x: number, y: number): LayoutSlot | null {
+    for (const slot of slots) {
+      const rect = Mathf.convert_rect_to_element_space(slot.rect, this.container);
 
-    const rect = this.container.getBoundingClientRect();
-
-    const W = rect.width - rect.x;
-    const H = this.container.clientHeight;
-
-    for (const s of slots) {
-      const rx = s.rect.x * W;
-      const ry = s.rect.y * H;
-      const rw = s.rect.width * W;
-      const rh = s.rect.height * H;
-
-      if (
-        x >= rx &&
-        x <= rx + rw &&
-        y >= ry &&
-        y <= ry + rh
-      ) {
-        return s;
+      if (AABB.containsPoint(rect, x, y)) {
+        return slot;
       }
     }
 
     return null;
   }
 
-  // ✅ REMOVE JANELA DE TODOS OS SLOTS
   private detachFromSlots(slots: LayoutSlot[], win: WindowEntity) {
     for (const s of slots) {
       if (s.activeWindow === win) {
@@ -117,17 +106,10 @@ export class LayoutEngine {
   }
 
   private updateSlotWindow(slot: LayoutSlot, node: WindowEntity) {
-    const rect = this.container.getBoundingClientRect();
-
-    const W = rect.width;
-    const H = rect.height;
-
-    node.rect = {
-      x: Math.round(W * slot.rect.x),
-      y: Math.round(H * slot.rect.y),
-      width: Math.round(W * slot.rect.width),
-      height: Math.round(H * slot.rect.height)
-    };
+    node.rect = Mathf.convert_rect_to_element_space(slot.rect, this.container);
   }
 
 }
+
+
+

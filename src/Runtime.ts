@@ -1,4 +1,6 @@
 import { DragSystem } from "./DragSystem";
+import { Input } from "./input/Input";
+import { InputEventDispacher } from "./InputEvents";
 import { LayoutEngine } from "./LayoutEngine";
 import { Collision } from "./physics/Collision";
 import type { Project } from "./Project";
@@ -10,6 +12,10 @@ export class Runtime {
   readonly layoutEngine: LayoutEngine;
   readonly dragSystem: DragSystem;
   readonly container: HTMLElement;
+  readonly InputEvents: InputEventDispacher;
+
+
+
   // readonly debugRenderer: LayoutDebugRenderer;
 
   private raf = 0;
@@ -21,6 +27,18 @@ export class Runtime {
 
     this.layoutEngine = new LayoutEngine(container);
     this.dragSystem = new DragSystem(project, container);
+
+    this.InputEvents = new InputEventDispacher();
+
+    this.InputEvents.onMouseButtonClick = (_code) => {
+      this.request_update_tick();
+    }
+
+    this.InputEvents.onMouseMove = (_pos) => {
+      this.request_update_tick();
+    }
+
+    Input.initialize(container);
     // this.debugRenderer = new LayoutDebugRenderer(container);
 
 
@@ -28,6 +46,10 @@ export class Runtime {
       if (!this.activeLayout) return;
       this.layoutEngine.processDrop(this.project, this.activeLayout, win, x, y);
     };
+
+    this.dragSystem.onDragMove = () => {
+
+    }
   }
 
   applyLayout(id: string) {
@@ -38,16 +60,9 @@ export class Runtime {
     this.layoutEngine.applyLayout(this.project, id);
   }
 
-  start() {
-    const loop = () => {
-      Collision.update(this.project);
-      WindowRenderer.render(this.project, this.container);
-      // this.debugRenderer.render(this.project, this.activeLayout);
-
-      this.raf = requestAnimationFrame(loop);
-    };
-
-    this.raf = requestAnimationFrame(loop);
+  request_update_tick() {
+    Collision.update(this.project);
+    WindowRenderer.render(this.project, this.container);
   }
 
   stop() {

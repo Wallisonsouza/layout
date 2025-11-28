@@ -1,3 +1,5 @@
+import type { Rect } from "./rect";
+
 export class Mathf {
 
   static clamp(v: number, a: number, b: number) { return Math.max(a, Math.min(b, v)); }
@@ -10,35 +12,23 @@ export class Mathf {
     return Math.sqrt(dx * dx + dy * dy);
   }
 
-  static toLocalCoords(container: HTMLElement, x: number, y: number) {
-    const rect = container.getBoundingClientRect();
+  static convert_rect_to_element_space(rect: Rect, element: HTMLElement): Rect {
+
+
+    // dont use bounds offset let | right
+    const bound = element.getBoundingClientRect();
+
+    const W = bound.width;
+    const H = bound.height;
+
+    const leftOffset = element.offsetLeft;
+    const rightOffset = element.offsetTop;
+
     return {
-      x: x - rect.left,
-      y: y - rect.top
+      x: Math.round(W * rect.x + leftOffset),
+      y: Math.round(H * rect.y + rightOffset),
+      width: Math.round(W * rect.width),
+      height: Math.round(H * rect.height)
     };
-  }
-
-  static slotRectToPixels(container: HTMLElement, slotRect: { x: number; y: number; width: number; height: number }) {
-    const W = container.clientWidth;
-    const H = container.clientHeight;
-
-    return {
-      x: Math.round(slotRect.x * W),
-      y: Math.round(slotRect.y * H),
-      width: Math.round(slotRect.width * W),
-      height: Math.round(slotRect.height * H)
-    };
-  }
-
-  static slotRectToAbsolute(container: HTMLElement, slotRect: { x: number; y: number; width: number; height: number }) {
-    const rect = container.getBoundingClientRect();
-    const pixels = this.slotRectToPixels(container, slotRect);
-    return {
-      x: pixels.x + rect.left,
-      y: pixels.y + rect.top,
-      width: pixels.width,
-      height: pixels.height
-    };
-
   }
 }

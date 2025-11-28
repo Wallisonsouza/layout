@@ -1,4 +1,5 @@
 import type { Project } from "../Project";
+import type { Rect } from "../rect";
 import type { WindowEntity } from "../Window";
 
 import { AABB } from "./AABB";
@@ -16,7 +17,7 @@ export class Collision {
     }
   }
 
-  public static mouseHitTest(
+  public static bar_collision(
     mouseX: number,
     mouseY: number
   ): WindowEntity | null {
@@ -25,7 +26,16 @@ export class Collision {
     let top: WindowEntity | null = null;
 
     for (const win of this.buffer) {
-      if (AABB.containsPoint(win.rect, mouseX, mouseY)) {
+
+      const adjusted: Rect = {
+        ...win.rect
+      };
+
+      adjusted.height = win.bar_heigth;
+
+
+
+      if (AABB.containsPoint(adjusted, mouseX, mouseY)) {
         if (!top || (win.z ?? 0) > (top.z ?? 0)) {
           top = win;
         }
@@ -34,5 +44,24 @@ export class Collision {
 
     return top;
   }
+
+  // public static mouseHitTest(
+  //   mouseX: number,
+  //   mouseY: number
+  // ): WindowEntity | null {
+  //   this.spatial.query(mouseX, mouseY, this.buffer);
+
+  //   let top: WindowEntity | null = null;
+
+  //   for (const win of this.buffer) {
+  //     if (AABB.containsPoint(win.rect, mouseX, mouseY)) {
+  //       if (!top || (win.z ?? 0) > (top.z ?? 0)) {
+  //         top = win;
+  //       }
+  //     }
+  //   }
+
+  //   return top;
+  // }
 
 }

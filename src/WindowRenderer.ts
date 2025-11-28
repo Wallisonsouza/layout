@@ -25,7 +25,7 @@ export class WindowRenderer {
   <div class="window">
 
     <div class="titlebar">
-      <span class="title">Minha Janela</span>
+      <span class="title">${windowNode.title}</span>
 
       <div class="controls">
         <button class="min">—</button>

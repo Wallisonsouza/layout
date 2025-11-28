@@ -13,7 +13,6 @@ export class DragSystem {
     offsetY: number;
   } | null = null;
 
-
   public onDragStart?: (win: WindowEntity) => void;
   public onDragMove?: (win: WindowEntity) => void;
   public onDrop?: (win: WindowEntity, x: number, y: number) => void;
@@ -41,11 +40,10 @@ export class DragSystem {
   }
 
   private onMouseDown = (e: MouseEvent) => {
-    const rect = this.container.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const x = e.clientX;
+    const y = e.clientY;
 
-    const hit = Collision.mouseHitTest(x, y);
+    const hit = Collision.bar_collision(x, y);
     if (!hit) return;
 
     this.bringToFront(hit);
@@ -63,9 +61,8 @@ export class DragSystem {
   private onMouseMove = (e: MouseEvent) => {
     if (!this.dragging) return;
 
-    const rect = this.container.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const x = e.clientX;
+    const y = e.clientY;
 
     const win = this.dragging.window;
 
@@ -82,14 +79,12 @@ export class DragSystem {
   private onMouseUp = (e: MouseEvent) => {
     if (!this.dragging) return;
 
-    const rect = this.container.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const x = e.clientX;
+    const y = e.clientY;
 
     const win = this.dragging.window;
 
     this.dragging = null;
-
     this.onDrop?.(win, x, y);
   };
 

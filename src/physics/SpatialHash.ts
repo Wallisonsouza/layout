@@ -1,12 +1,10 @@
 import type { WindowEntity } from "../Window";
 
 export class SpatialHash<T extends WindowEntity> {
-  private cellSize: number;
   private invCellSize: number;
   private buckets: Map<number, T[]> = new Map();
 
   constructor(cellSize: number) {
-    this.cellSize = cellSize;
     this.invCellSize = 1 / cellSize;
   }
 

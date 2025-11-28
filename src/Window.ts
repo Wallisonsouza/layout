@@ -13,9 +13,12 @@ export class WindowEntity extends Entity {
   z: number = 0;
   rect: Rect;
   context?: HTMLElement;
+  bar_heigth: number = 40;
+  user_select: boolean = false;
 
-  constructor(title: string, rect: Rect) {
+  constructor(title: string, rect: Rect, context?: HTMLElement) {
     super();
+    this.context = context;
     this.title = title;
     this.rect = rect;
   }
